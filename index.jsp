@@ -21,8 +21,8 @@
         padding: 20px;
     }
     input[type="email"] {
-        width: 100%; /* Full width */
-        max-width: 500px; /* Max width */
+        width: 100%; 
+        max-width: 500px;
         height: 50px;
         font-size: 24px;
         padding: 10px;
@@ -33,7 +33,7 @@
         transition: border-color 0.3s, box-shadow 0.3s;
     }
     input[type="email"]:focus {
-        border-color: #007BFF; /* Focus border color */
+        border-color: #007BFF; 
         box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
         outline: none;
     }
@@ -48,12 +48,12 @@
         transition: background-color 0.3s, transform 0.3s;
     }
     input[type="submit"]:hover {
-        background-color: #0056b3; /* Darker shade on hover */
-        transform: scale(1.05); /* Slightly enlarge on hover */
+        background-color: #0056b3; 
+        transform: scale(1.05); 
     }
     input[type="submit"]:active {
-        background-color: #00408b; /* Even darker shade on click */
-        transform: scale(1); /* Reset scale on click */
+        background-color: #00408b; 
+        transform: scale(1); 
     }
 </style>
 
@@ -69,31 +69,30 @@
     </form>
 
     <%
-        // Database credentials
         String dbURL = "jdbc:mysql://localhost:3306/email_subscription";
-        String dbUser = "root";  // Replace with your MySQL username
-        String dbPassword = "abc123";  // Replace with your MySQL password
+        String dbUser = "dbusername";  
+        String dbPassword = "dbpassword"; 
 
         if(request.getParameter("btn_subscribe") != null) {
             String email = request.getParameter("email");
             boolean isNewEmail = false;
 
-            // Database connection
+           
             Connection conn = null;
             PreparedStatement pstmt = null;
             ResultSet rs = null;
             try {
-                // Load the JDBC driver
+                
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                // Connect to the database
+                
                 conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-                // Check if the email is already in the database
+                
                 String query = "SELECT * FROM subscribers WHERE email = ?";
                 pstmt = conn.prepareStatement(query);
                 pstmt.setString(1, email);
                 rs = pstmt.executeQuery();
                 if(!rs.next()) {
-                    // Insert the new email into the database
+                    
                     query = "INSERT INTO subscribers (email) VALUES (?)";
                     pstmt = conn.prepareStatement(query);
                     pstmt.setString(1, email);
@@ -113,33 +112,32 @@
             }
 
             if(isNewEmail) {
-                // Set mail properties
                 Properties p = System.getProperties();
                 p.put("mail.smtp.host", "smtp.gmail.com");
                 p.put("mail.smtp.port", "587");
                 p.put("mail.smtp.auth", "true");
                 p.put("mail.smtp.starttls.enable", "true");
 
-                // Authentication
+                
                 Session ms = Session.getInstance(p, new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        String un = "tester.anuj.mhatre.kc@gmail.com";
-                        String pw = "wbkwoojioztcnasi";
+                        String un = "";
+                        String pw = "";
                         return new PasswordAuthentication(un, pw);
                     }
                 });
 
                 try {
-                    // Compose the message
+                   
                     MimeMessage msg = new MimeMessage(ms);
                     String subject = "Subscription Confirmation";
                     msg.setSubject(subject);
                     String txt = "You have successfully subscribed with the email: " + email;
                     msg.setText(txt);
-                    msg.setFrom(new InternetAddress("tester.anuj.mhatre.kc@gmail.com"));
+                    msg.setFrom(new InternetAddress(""));
                     msg.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
 
-                    // Send the message
+                   
                     Transport.send(msg);
                     out.println("Subscription successful! A confirmation email has been sent to " + email);
                 } catch(Exception e) {
@@ -152,22 +150,21 @@
             String email = request.getParameter("email");
             boolean emailExists = false;
 
-            // Database connection
+           
             Connection conn = null;
             PreparedStatement pstmt = null;
             ResultSet rs = null;
             try {
-                // Load the JDBC driver
+                
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                // Connect to the database
+                
                 conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-                // Check if the email is in the database
+                
                 String query = "SELECT * FROM subscribers WHERE email = ?";
                 pstmt = conn.prepareStatement(query);
                 pstmt.setString(1, email);
                 rs = pstmt.executeQuery();
                 if(rs.next()) {
-                    // Delete the email from the database
                     query = "DELETE FROM subscribers WHERE email = ?";
                     pstmt = conn.prepareStatement(query);
                     pstmt.setString(1, email);
@@ -194,7 +191,7 @@
                 p.put("mail.smtp.auth", "true");
                 p.put("mail.smtp.starttls.enable", "true");
 
-                // Authentication
+                
                 Session ms = Session.getInstance(p, new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         String un = "tester.anuj.mhatre.kc@gmail.com";
@@ -204,7 +201,6 @@
                 });
 
                 try {
-                    // Compose the message
                     MimeMessage msg = new MimeMessage(ms);
                     String subject = "Unsubscription Confirmation";
                     msg.setSubject(subject);
@@ -213,7 +209,7 @@
                     msg.setFrom(new InternetAddress("tester.anuj.mhatre.kc@gmail.com"));
                     msg.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
 
-                    // Send the message
+                    
                     Transport.send(msg);
                     out.println("Unsubscription successful! A confirmation email has been sent to " + email);
                 } catch(Exception e) {
